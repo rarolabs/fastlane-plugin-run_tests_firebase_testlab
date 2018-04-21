@@ -46,7 +46,7 @@ module Fastlane
         end
 
         UI.message("Downloading instrumentation test results from Firebase Test Lab...")
-        Action.sh("#{Commands.download_results} #{params[:bucket_url]} #{params[:output_dir]}/")
+        Action.sh("#{Commands.download_results} #{params[:bucket_url]} #{params[:output_dir]}")
 
         if params[:delete_firebase_files]
           UI.message("Deleting files from firebase storage...")
