@@ -27,14 +27,20 @@ module Fastlane
         Action.sh("#{Commands.auth} --key-file #{@client_secret_file}")
 
         UI.message("Running instrumentation tests in Firebase Test Lab...")
-        Action.sh("#{Commands.run_tests} "\
+
+        opt_devices = []
+        0.upto(params[:model].count) do |i|
+          opt_devices << "--device model=#{params[:model][i]},version=#{params[:version][i]},locale=#{params[:locale]},orientation=#{params[:orientation]} "
+        end
+        command = "#{Commands.run_tests} "\
                   "--type instrumentation "\
                   "--app #{params[:app_apk]} "\
                   "--test #{params[:android_test_apk]} "\
-                  "--device model=#{params[:model]},version=#{params[:version]},locale=#{params[:locale]},orientation=#{params[:orientation]} "\
                   "--timeout #{params[:timeout]} "\
                   "#{params[:extra_options]} "\
-                  "2>&1 | tee #{@test_console_output_file}")
+                  "2>&1 | tee #{@test_console_output_file}"
+        command += opt_devices.join(' ')
+        Action.sh(command)
 
         UI.message("Create firebase directory (if not exists) to store test results.")
         FileUtils.mkdir_p(params[:output_dir])
