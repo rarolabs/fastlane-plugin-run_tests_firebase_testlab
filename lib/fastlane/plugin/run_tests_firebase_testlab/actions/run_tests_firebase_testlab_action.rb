@@ -29,8 +29,8 @@ module Fastlane
         UI.message("Running instrumentation tests in Firebase Test Lab...")
 
         opt_devices = []
-        0.upto(params[:model].count) do |i|
-          opt_devices << "--device model=#{params[:model][i]},version=#{params[:version][i]},locale=#{params[:locale]},orientation=#{params[:orientation]} "
+        0.upto(params[:model].size - 1) do |i|
+          opt_devices << "--device model=#{params[:model][i]},version=#{params[:version][i]},locale=#{params[:locale]},orientation=#{params[:orientation]}"
         end
         command = "#{Commands.run_tests} "\
                   "--type instrumentation "\
@@ -38,8 +38,9 @@ module Fastlane
                   "--test #{params[:android_test_apk]} "\
                   "--timeout #{params[:timeout]} "\
                   "#{params[:extra_options]} "\
+                  "#{opt_devices.join(' ')} "\
                   "2>&1 | tee #{@test_console_output_file}"
-        command += opt_devices.join(' ')
+
         Action.sh(command)
 
         UI.message("Create firebase directory (if not exists) to store test results.")
